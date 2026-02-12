@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Fundo Preto Profundo NEXUS */
+    --background: 240 10% 2%; 
+    --foreground: 0 0% 98%;
+
+    /* Cards e Popovers mais escuros para contraste */
+    --card: 240 10% 4%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 4%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Verde Neon NEXUS (ajustado para vibrar mais) */
+    --primary: 142 70% 45%; 
+    --primary-foreground: 144 95% 4%;
+
+    --secondary: 240 5% 10%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 5% 10%;
+    --muted-foreground: 240 5% 65%;
+
+    --accent: 142 70% 45%; /* Accent agora segue o primário */
+    --accent-foreground: 144 95% 4%;
+
+    --border: 240 5% 12%;
+    --input: 240 5% 12%;
+    --ring: 142 70% 45%;
+
+    --radius: 0.75rem;
+
+    /* Semantic Tokens atualizados para o Verde NEXUS */
+    --success: 142 70% 45%;
+    --success-foreground: 144 95% 4%;
+    
+    /* Sidebar acompanhando o tema escuro */
+    --sidebar-background: 240 10% 2%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 142 70% 45%;
+    --sidebar-primary-foreground: 144 95% 4%;
+    --sidebar-border: 240 5% 12%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer utilities {
+  .glow-success {
+    box-shadow: 0 0 20px hsl(160 84% 39% / 0.3), 0 0 60px hsl(160 84% 39% / 0.1);
+  }
+  .glow-warning {
+    box-shadow: 0 0 20px hsl(38 92% 50% / 0.3);
+  }
+  .glow-info {
+    box-shadow: 0 0 20px hsl(217 91% 60% / 0.3);
+  }
+  .glow-premium {
+    box-shadow: 0 0 20px hsl(258 90% 66% / 0.3);
+  }
+  .text-success { color: hsl(var(--success)); }
+  .text-warning { color: hsl(var(--warning)); }
+  .text-info { color: hsl(var(--info)); }
+  .text-premium { color: hsl(var(--premium)); }
+  .bg-success { background-color: hsl(var(--success)); }
+  .bg-warning { background-color: hsl(var(--warning)); }
+  .bg-info { background-color: hsl(var(--info)); }
+  .bg-premium { background-color: hsl(var(--premium)); }
+  .bg-success\/10 { background-color: hsl(var(--success) / 0.1); }
+  .bg-warning\/10 { background-color: hsl(var(--warning) / 0.1); }
+  .bg-info\/10 { background-color: hsl(var(--info) / 0.1); }
+  .bg-premium\/10 { background-color: hsl(var(--premium) / 0.1); }
+  .bg-destructive\/10 { background-color: hsl(var(--destructive) / 0.1); }
+}

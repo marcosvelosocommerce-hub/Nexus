@@ -41,29 +41,30 @@ const LandingPage = () => {
 
   // --- LÓGICA CORRIGIDA AQUI ---
   const handleInstall = () => {
-    // 1. Se for iOS, abre o manual de instruções
+    // 1. PRIORIDADE MÁXIMA: Verifica se o usuário já está usando o App (PWA)
+    // Isso resolve o problema no iPhone: se ele já instalou e abriu o app, 
+    // o botão serve como "Entrar", e não abre o tutorial de novo.
+    if (isInstalled) {
+      navigate("/auth");
+      return;
+    }
+
+    // 2. Se não está instalado e é iPhone/iPad (iOS)
+    // Abre o manual de instruções, pois a Apple bloqueia instalação automática.
     if (isIOS) {
       setIosDialog(true);
       return;
     }
     
-    // 2. Se puder instalar (navegador suporta e não tá instalado), pede para instalar
+    // 3. Android ou Chrome no PC/Mac
+    // Tenta disparar o prompt nativo de instalação.
     if (canInstall) {
       promptInstall();
       return;
     }
 
-    // 3. SE JÁ ESTIVER INSTALADO (O PULO DO GATO 🐱)
-    // Antes ele mostrava um toast. Agora ele navega para o Login.
-    if (isInstalled) {
-      navigate("/auth");
-      return;
-    } 
-    
-    // 4. Fallback (caso raro onde não dá pra instalar nem detectar)
-    else {
-      toast.info("Para instalar, procure a opção 'Adicionar à tela de início' no menu do navegador.");
-    }
+    // 4. Fallback (ex: Firefox ou Safari no Mac antigo)
+    toast.info("Para instalar, procure a opção 'Adicionar à tela de início' ou 'Instalar' no menu do navegador.");
   };
 
   return (

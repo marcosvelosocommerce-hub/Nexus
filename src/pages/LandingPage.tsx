@@ -138,7 +138,12 @@ const LandingPage = () => {
           >
             <Download className="mr-2 h-4 w-4" /> 
             {/* Mudei o texto aqui para ficar mais claro */}
-            {isInstalled ? "Acessar Conta" : "Instalar App"}
+            {isInstalled 
+              ? "Acessar Conta" 
+              : isIOS 
+                ? "Instalar no iOS" 
+                : "Instalar App"
+            }
           </Button>
         </div>
 

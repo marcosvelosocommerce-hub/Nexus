@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => ({
     
     VitePWA({
       registerType: "autoUpdate",
-      // --- ADICIONE ISSO AQUI: ---
+      // --- ISSO AQUI: ---
       devOptions: {
         enabled: true // <--- ISSO LIGA O PWA NO LOCALHOST
       },

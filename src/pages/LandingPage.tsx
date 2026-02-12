@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
-import { Zap, Shield, Trophy, ArrowRight, Download, LayoutDashboard, Smartphone, Check } from "lucide-react";
+import { Zap, Shield, Trophy, ArrowRight, Download, LayoutDashboard, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -39,37 +39,44 @@ const LandingPage = () => {
     return <Navigate to="/dashboard" replace />;
   }
 
-  // --- LÓGICA DE INSTALAÇÃO (Mantida do seu código original) ---
+  // --- LÓGICA CORRIGIDA AQUI ---
   const handleInstall = () => {
+    // 1. Se for iOS, abre o manual de instruções
     if (isIOS) {
       setIosDialog(true);
       return;
     }
+    
+    // 2. Se puder instalar (navegador suporta e não tá instalado), pede para instalar
     if (canInstall) {
       promptInstall();
       return;
     }
+
+    // 3. SE JÁ ESTIVER INSTALADO (O PULO DO GATO 🐱)
+    // Antes ele mostrava um toast. Agora ele navega para o Login.
     if (isInstalled) {
-      toast.success("O App já está instalado! Verifique seus aplicativos.");
-    } else {
-      toast.info("Para instalar, abra o menu do navegador e procure 'Instalar App'.");
+      navigate("/auth");
+      return;
+    } 
+    
+    // 4. Fallback (caso raro onde não dá pra instalar nem detectar)
+    else {
+      toast.info("Para instalar, procure a opção 'Adicionar à tela de início' no menu do navegador.");
     }
   };
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-black selection:bg-primary/20 text-white">
       
-      {/* --- FUNDO (Background Aurora - Igual ao Login) --- */}
+      {/* --- FUNDO (Background Aurora) --- */}
       <div className="fixed inset-0 z-0 pointer-events-none">
-        {/* Grade Sutil */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-        {/* Brilho Roxo (Topo Esquerda) */}
         <div className="absolute top-[-10%] left-[-10%] h-[500px] w-[500px] rounded-full bg-purple-500/20 blur-[100px] opacity-50 animate-pulse" />
-        {/* Brilho Verde (Centro/Baixo) */}
         <div className="absolute top-[20%] right-[-10%] h-[600px] w-[600px] rounded-full bg-primary/10 blur-[120px] opacity-40 animate-pulse delay-1000" />
       </div>
 
-      {/* --- NAVBAR STICKY --- */}
+      {/* --- NAVBAR --- */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${scrolled ? "border-white/10 bg-black/80 backdrop-blur-xl py-3" : "border-transparent bg-transparent py-6"}`}>
         <div className="container mx-auto flex items-center justify-between px-6 max-w-6xl">
           <div className="flex items-center gap-2">
@@ -95,7 +102,6 @@ const LandingPage = () => {
       {/* --- HERO SECTION --- */}
       <main className="relative z-10 pt-32 pb-20 container mx-auto px-6 text-center max-w-6xl">
         
-        {/* Badge "Novidade" */}
         <div className="mx-auto mb-8 flex w-fit items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/50 px-4 py-1.5 backdrop-blur-md transition-all hover:border-zinc-700 cursor-default">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -104,7 +110,6 @@ const LandingPage = () => {
           <span className="text-xs font-medium text-zinc-300">v1.2: Modo Dark & Gamificação</span>
         </div>
 
-        {/* Título Principal */}
         <h1 className="mx-auto max-w-4xl text-5xl font-black tracking-tighter sm:text-7xl mb-6">
           Domine seus hábitos, <br className="hidden sm:block" />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">
@@ -131,19 +136,18 @@ const LandingPage = () => {
             className="h-12 rounded-full px-8 text-base border-zinc-700 bg-zinc-950/50 text-zinc-300 hover:bg-zinc-900 hover:text-white"
           >
             <Download className="mr-2 h-4 w-4" /> 
-            {isInstalled ? "Abrir App" : "Instalar App"}
+            {/* Mudei o texto aqui para ficar mais claro */}
+            {isInstalled ? "Acessar Conta" : "Instalar App"}
           </Button>
         </div>
 
-        {/* --- SHOWCASE (Visual do App) --- */}
+        {/* --- SHOWCASE --- */}
         <div className="relative mx-auto max-w-5xl rounded-xl border border-zinc-800 bg-zinc-900/30 p-2 shadow-2xl backdrop-blur-sm group">
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-20 h-full w-full pointer-events-none"></div>
           
           <div className="overflow-hidden rounded-lg border border-zinc-800 bg-black aspect-video flex items-center justify-center relative">
-            
-            {/* --- SEU PRINT VEM AQUI --- */}
-            {/* Substitua a div abaixo pela tag <img /> quando tiver o print */}
-            {/* <img src="/dashboard-print.png" alt="Dashboard" className="w-full h-full object-cover" /> */}
+            {/* Se tiver o print, descomente a linha abaixo */}
+            {/* <img src="/dashboard-print.png" alt="Dashboard Preview" className="w-full h-full object-cover object-top" /> */}
             
             <div className="flex flex-col items-center gap-4 text-zinc-600">
                <div className="h-20 w-20 rounded-full bg-zinc-900 flex items-center justify-center border border-zinc-800 group-hover:border-primary/50 group-hover:text-primary transition-all duration-500">
@@ -151,12 +155,10 @@ const LandingPage = () => {
                </div>
                <p className="font-mono text-sm">Dashboard Preview</p>
             </div>
-            {/* --------------------------- */}
-            
           </div>
         </div>
 
-        {/* --- FEATURES GRID --- */}
+        {/* --- FEATURES --- */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-24 max-w-5xl mx-auto">
           <FeatureCard 
             icon={<Zap className="h-6 w-6 text-yellow-500" />}
@@ -175,13 +177,12 @@ const LandingPage = () => {
           />
         </div>
 
-        {/* Footer Simples */}
         <footer className="mt-32 border-t border-zinc-800 pt-8 pb-12">
           <p className="text-zinc-600 text-sm">© 2024 Nexus App. Todos os direitos reservados.</p>
         </footer>
       </main>
 
-      {/* --- DIALOG DE INSTALAÇÃO IOS (Mantido) --- */}
+      {/* --- DIALOG DE INSTALAÇÃO IOS --- */}
       <Dialog open={iosDialog} onOpenChange={setIosDialog}>
         <DialogContent className="border-zinc-800 bg-zinc-950 text-white sm:max-w-md">
           <DialogHeader>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,15 +8,26 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { LogIn, UserPlus, Mail, Lock } from "lucide-react";
+import { LogIn, UserPlus, Mail, Lock, ExternalLink } from "lucide-react";
 
 const AuthPage = () => {
   const { session, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // Estado para controlar o checkbox dos termos
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Estado para detectar se está rodando como App instalado (PWA)
+  const [isStandalone, setIsStandalone] = useState(false);
+
+  useEffect(() => {
+    const checkStandalone = 
+      window.matchMedia('(display-mode: standalone)').matches || 
+      (window.navigator as any).standalone || 
+      document.referrer.includes('android-app://');
+    
+    setIsStandalone(checkStandalone);
+  }, []);
 
   if (loading) {
     return (
@@ -33,158 +44,122 @@ const AuthPage = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setIsLoading(false);
-    if (error) {
-      toast.error(error.message === "Invalid login credentials"
-        ? "Email ou senha incorretos."
-        : error.message);
-    } else {
-      toast.success("Login realizado com sucesso!");
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) toast.error(error.message);
+    } catch (err: any) {
+      toast.error(err?.message || "Erro ao tentar entrar.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validação de Senha
-    if (password.length < 6) {
-      toast.error("A senha deve ter pelo menos 6 caracteres.");
-      return;
-    }
-
-    // Validação de Termos (Compliance)
     if (!acceptedTerms) {
-      toast.error("Você deve ler e aceitar os Termos de Uso para criar uma conta.");
+      toast.error("Você precisa aceitar os termos de uso.");
       return;
     }
-
     setIsLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { emailRedirectTo: window.location.origin },
-    });
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) toast.error(error.message);
+    else toast.success("Verifique seu e-mail para confirmar o cadastro!");
     setIsLoading(false);
-    if (error) {
-      toast.error(error.message);
-    } else {
-      toast.success("Conta criada com sucesso! Você já pode fazer login.");
-    }
   };
 
   return (
-    // Container Principal com Fundo Preto e Efeitos
-    <div className="relative flex min-h-screen items-center justify-center bg-black px-4 overflow-hidden selection:bg-primary/20">
-      
-      {/* --- EFEITOS DE FUNDO (Aurora Boreal) --- */}
-      {/* 1. Grade Sutil */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-      
-      {/* 2. Brilho Roxo (Topo Esquerda) */}
-      <div className="absolute top-[-10%] left-[-10%] h-[500px] w-[500px] rounded-full bg-purple-500/20 blur-[100px] animate-pulse" />
-      
-      {/* 3. Brilho Verde (Baixo Direita) */}
-      <div className="absolute bottom-[-10%] right-[-10%] h-[500px] w-[500px] rounded-full bg-primary/20 blur-[100px] animate-pulse delay-1000" />
-      
-      {/* ---------------------------------------- */}
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-black p-4">
+      {/* Efeitos de Aurora Boreal no Fundo */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-[30%] -left-[10%] h-[70%] w-[70%] rounded-full bg-primary/10 blur-[120px] animate-pulse" />
+        <div className="absolute -bottom-[30%] -right-[10%] h-[70%] w-[70%] rounded-full bg-primary/5 blur-[120px]" />
+      </div>
 
-      {/* Card Principal (Vidro) */}
-      <Card className="relative z-10 w-full max-w-md border-zinc-800 bg-zinc-950/70 backdrop-blur-xl shadow-2xl">
-        <CardHeader className="text-center space-y-2">
-          <CardTitle className="text-4xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-400">
-            NEXUS
-          </CardTitle>
+      <Card className="relative z-10 w-full max-w-md border-zinc-800 bg-zinc-950/50 backdrop-blur-xl">
+        <CardHeader className="space-y-1 text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 shadow-inner">
+            <div className="h-6 w-6 rounded-full border-2 border-primary shadow-[0_0_15px_rgba(34,197,94,0.5)]" />
+          </div>
+          <CardTitle className="text-3xl font-bold tracking-tight text-white">NEXUS</CardTitle>
           <CardDescription className="text-zinc-400">
-            Entre na sua conta ou crie uma nova
+            Sua central de produtividade avançada
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6 bg-zinc-900/50">
-              <TabsTrigger value="login" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <LogIn className="h-4 w-4" /> Login
+            <TabsList className="mb-8 grid w-full grid-cols-2 bg-zinc-900/50 p-1">
+              <TabsTrigger value="login" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-primary transition-all duration-300">
+                <LogIn className="mr-2 h-4 w-4" /> Entrar
               </TabsTrigger>
-              <TabsTrigger value="signup" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <UserPlus className="h-4 w-4" /> Cadastrar
+              <TabsTrigger value="register" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-primary transition-all duration-300">
+                <UserPlus className="mr-2 h-4 w-4" /> Criar conta
               </TabsTrigger>
             </TabsList>
 
-            {/* ABA DE LOGIN */}
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="login-email" className="text-zinc-300">Email</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
+                  <Label htmlFor="login-email" className="text-zinc-400">E-mail</Label>
+                  <div className="relative group">
+                    <Mail className="absolute left-3 top-3 h-4 w-4 text-zinc-600 group-focus-within:text-primary transition-colors" />
                     <Input 
                       id="login-email" 
                       type="email" 
-                      placeholder="seu@email.com" 
+                      placeholder="nome@exemplo.com" 
                       value={email} 
-                      onChange={(e) => setEmail(e.target.value)} 
-                      className="pl-10 bg-zinc-900/50 border-zinc-800 focus:border-primary/50 text-white placeholder:text-zinc-600" 
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="bg-zinc-900/50 border-zinc-800 focus:border-primary/50 pl-10 text-white placeholder:text-zinc-600 transition-all" 
                       required 
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="login-password" className="text-zinc-300">Senha</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
+                  <Label htmlFor="login-password" className="text-zinc-400">Senha</Label>
+                  <div className="relative group">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-zinc-600 group-focus-within:text-primary transition-colors" />
                     <Input 
                       id="login-password" 
                       type="password" 
-                      placeholder="••••••••" 
                       value={password} 
-                      onChange={(e) => setPassword(e.target.value)} 
-                      className="pl-10 bg-zinc-900/50 border-zinc-800 focus:border-primary/50 text-white placeholder:text-zinc-600" 
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="bg-zinc-900/50 border-zinc-800 focus:border-primary/50 pl-10 text-white transition-all" 
                       required 
                     />
                   </div>
                 </div>
-                <Button type="submit" className="w-full font-bold shadow-lg shadow-primary/20" disabled={isLoading}>
-                  {isLoading ? "Entrando..." : "Entrar"}
+                <Button type="submit" className="w-full font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all" disabled={isLoading}>
+                  {isLoading ? "Entrando..." : "Acessar sistema"}
                 </Button>
               </form>
             </TabsContent>
 
-            {/* ABA DE CADASTRO */}
-            <TabsContent value="signup">
+            <TabsContent value="register">
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email" className="text-zinc-300">Email</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
-                    <Input 
-                      id="signup-email" 
-                      type="email" 
-                      placeholder="seu@email.com" 
-                      value={email} 
-                      onChange={(e) => setEmail(e.target.value)} 
-                      className="pl-10 bg-zinc-900/50 border-zinc-800 focus:border-primary/50 text-white placeholder:text-zinc-600" 
-                      required 
-                    />
-                  </div>
+                  <Label htmlFor="register-email" className="text-zinc-400">E-mail</Label>
+                  <Input 
+                    id="register-email" 
+                    type="email" 
+                    placeholder="nome@exemplo.com" 
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="bg-zinc-900/50 border-zinc-800 focus:border-primary/50 text-white placeholder:text-zinc-600" 
+                    required 
+                  />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password" className="text-zinc-300">Senha</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
-                    <Input 
-                      id="signup-password" 
-                      type="password" 
-                      placeholder="Mínimo 6 caracteres" 
-                      value={password} 
-                      onChange={(e) => setPassword(e.target.value)} 
-                      className="pl-10 bg-zinc-900/50 border-zinc-800 focus:border-primary/50 text-white placeholder:text-zinc-600" 
-                      required 
-                      minLength={6} 
-                    />
-                  </div>
+                  <Label htmlFor="register-password" className="text-zinc-400">Senha</Label>
+                  <Input 
+                    id="register-password" 
+                    type="password" 
+                    value={password} 
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="bg-zinc-900/50 border-zinc-800 focus:border-primary/50 text-white placeholder:text-zinc-600" 
+                    required 
+                    minLength={6} 
+                  />
                 </div>
 
-                {/* CHECKBOX DE TERMOS (Design Atualizado) */}
                 <div className="flex items-start space-x-2 pt-2">
                   <input
                     type="checkbox"
@@ -206,6 +181,22 @@ const AuthPage = () => {
           </Tabs>
         </CardContent>
       </Card>
+
+      {/* Botão Discreto de Retorno ao Website (Aparece apenas no App instalado) */}
+      {isStandalone && (
+        <div className="absolute bottom-8 z-10 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
+          <a 
+            href="https://nexusbrasil.vercel.app" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="group flex items-center gap-2 text-[10px] font-medium tracking-widest uppercase text-zinc-600 hover:text-primary transition-colors"
+          >
+            <span className="h-px w-6 bg-zinc-800 group-hover:bg-primary/50 transition-colors" />
+            Acessar website NEXUS
+            <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-all translate-x-[-4px] group-hover:translate-x-0" />
+          </a>
+        </div>
+      )}
     </div>
   );
 };

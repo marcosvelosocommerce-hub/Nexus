@@ -107,6 +107,7 @@ const FinancePage = () => {
       "Educação": ['curso', 'livro', 'escola', 'faculdade', 'universidade', 'aula', 'workshop', 'seminário', 'seminario'],
       "Roupas": ['roupa', 'calçado', 'calcado', 'sapato', 'vestuário', 'vestuario', 'moda', 'look', 'blusa', 'calça', 'calca', 'jaqueta', 'tênis', 'tenis', 'sapato', 'vestido', 'saia'],
       "Tecnologia": ['celular', 'notebook', 'tablet', 'aplicativo', 'software', 'hardware', 'gadget'],
+      "Banco": ['pix', 'transferência', 'transferencia', 'boleto', 'ted', 'doc', 'saque', 'deposito', 'depósito', "cartao", "cartão", "cartao de credito", "cartão de crédito", "cartao de crédito", "cartão de credito", "crédito", "credito"],
     };
 
     for (const [cat, keywords] of Object.entries(categories)) {

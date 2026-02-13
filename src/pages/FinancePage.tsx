@@ -94,7 +94,7 @@ const FinancePage = () => {
       return;
     }
 
-    const incomeKeywords = ['ganhei', 'salário', 'salario', 'recebi', 'pix recebido', 'venda', 'renda', 'entrada', 'faturei'];
+    const incomeKeywords = ['ganhei', 'salário', 'salario', 'recebi', 'pix recebido', 'venda', 'renda', 'entrada', 'faturei', "ganhar", "recebe", "entrou"];
     const isIncome = incomeKeywords.some(key => text.includes(key));
 
     let category = "Geral";

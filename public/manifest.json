@@ -2,7 +2,7 @@
   "name": "NEXUS",
   "short_name": "NEXUS",
   "description": "Gamifique sua rotina. Controle hábitos, finanças e agenda.",
-  "start_url": "/",
+  "start_url": "/auth",
   "display": "standalone",
   "background_color": "#09090b",
   "theme_color": "#16a34a",

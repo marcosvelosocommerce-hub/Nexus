@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 const APP_URL = "https://nexusapp-jet.vercel.app";
 
 // O seu e-mail de contato (Altere aqui quando criar o oficial!)
-const CONTATO_EMAIL = "suporte@nexusapp.com.br";
+const CONTATO_EMAIL = "nexusappbrasil@gmail.com";
 
 const LandingPage = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -98,14 +98,22 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* DASHBOARD PREVIEW */}
-        <section className="container mx-auto px-6 max-w-6xl mb-32">
-          <div className="relative rounded-2xl border border-zinc-800 bg-zinc-900/30 p-2 shadow-2xl backdrop-blur-sm group overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-20 pointer-events-none"></div>
-            <div className="rounded-xl border border-zinc-800 bg-black aspect-video flex flex-col items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070')] bg-cover bg-center mix-blend-luminosity"></div>
-              <LayoutDashboard className="h-16 w-16 text-zinc-700 mb-4 z-10" />
-              <p className="font-mono text-zinc-500 z-10">Interface do Sistema (Print Aqui)</p>
+        {/* DASHBOARD PREVIEW COM IMAGEM 3D */}
+        <section className="container mx-auto px-6 max-w-6xl mb-32 hover:scale-[1.01] transition-transform duration-500">
+          <div className="relative rounded-2xl border border-zinc-800 bg-zinc-900/30 p-2 shadow-2xl backdrop-blur-sm overflow-hidden">
+            
+            {/* Efeito de sombreamento para mesclar a imagem com o fundo do site */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-transparent to-transparent z-10 pointer-events-none"></div>
+            
+            <div className="rounded-xl border border-zinc-800 bg-black aspect-video relative overflow-hidden flex items-center justify-center">
+              
+              {/* COLOQUE O NOME EXATO DO FICHEIRO AQUI NO SRC */}
+              <img 
+                src="/nexus-mockup.jpg" 
+                alt="Apresentação do ecossistema Nexus" 
+                className="w-full h-full object-cover"
+              />
+
             </div>
           </div>
         </section>
@@ -255,7 +263,7 @@ const LandingPage = () => {
             </a>
             
             <p className="mt-6 text-sm text-zinc-500 font-mono">
-              Ou envie um e-mail direto para: nexusappbrasil@gmail.com <span className="text-zinc-300">{CONTATO_EMAIL}</span>
+              Ou envie um e-mail direto para: <span className="text-zinc-300">{CONTATO_EMAIL}</span>
             </p>
           </div>
         </section>

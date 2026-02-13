@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
-import { Zap, Shield, Trophy, ArrowRight, LayoutDashboard, Check, Target, LineChart, Wallet, ChevronDown, Star } from "lucide-react";
+import { Zap, Shield, Trophy, ArrowRight, LayoutDashboard, Check, Target, LineChart, Wallet, ChevronDown, Star, Mail, MessageSquareText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // O link do seu APP!
 const APP_URL = "https://nexusapp-jet.vercel.app";
+
+// O seu e-mail de contato (Altere aqui quando criar o oficial!)
+const CONTATO_EMAIL = "suporte@nexusapp.com.br";
 
 const LandingPage = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -44,6 +47,7 @@ const LandingPage = () => {
             <button onClick={() => scrollToSection('recursos')} className="hover:text-white transition-colors">Recursos</button>
             <button onClick={() => scrollToSection('planos')} className="hover:text-white transition-colors">Planos</button>
             <button onClick={() => scrollToSection('faq')} className="hover:text-white transition-colors">FAQ</button>
+            <button onClick={() => scrollToSection('contato')} className="hover:text-white transition-colors">Contato</button>
           </div>
 
           <div className="flex items-center gap-4">
@@ -99,7 +103,6 @@ const LandingPage = () => {
           <div className="relative rounded-2xl border border-zinc-800 bg-zinc-900/30 p-2 shadow-2xl backdrop-blur-sm group overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-20 pointer-events-none"></div>
             <div className="rounded-xl border border-zinc-800 bg-black aspect-video flex flex-col items-center justify-center relative overflow-hidden">
-              {/* Aqui no futuro você pode colocar um print real do seu sistema */}
               <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070')] bg-cover bg-center mix-blend-luminosity"></div>
               <LayoutDashboard className="h-16 w-16 text-zinc-700 mb-4 z-10" />
               <p className="font-mono text-zinc-500 z-10">Interface do Sistema (Print Aqui)</p>
@@ -202,7 +205,6 @@ const LandingPage = () => {
                 <PricingFeature text="Conquistas e emblemas exclusivos" highlight />
                 <PricingFeature text="Suporte prioritário" highlight />
               </ul>
-              {/* ATENÇÃO: Botão de Assinar - Futuramente ligaremos ao MercadoPago/Stripe */}
               <Button className="w-full h-12 rounded-xl bg-primary text-black hover:bg-primary/90 font-bold text-base shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:scale-[1.02] transition-transform">
                 Assinar o PRO
               </Button>
@@ -211,7 +213,7 @@ const LandingPage = () => {
         </section>
 
         {/* FAQ */}
-        <section id="faq" className="container mx-auto px-6 max-w-3xl mb-32 pt-20">
+        <section id="faq" className="container mx-auto px-6 max-w-3xl mb-24 pt-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Perguntas Frequentes</h2>
           </div>
@@ -222,12 +224,39 @@ const LandingPage = () => {
             />
             <FaqItem 
               question="Meus dados financeiros estão seguros?" 
-              answer="Com certeza. Utilizamos as mais modernas tecnologias de criptografia. Não temos acesso às suas senhas de banco e seus dados são armazenados de forma privada na nuvem da AWS/Supabase." 
+              answer="Com certeza. Utilizamos as mais modernas tecnologias de criptografia. Não temos acesso às suas senhas de banco e seus dados são armazenados de forma privada na nuvem." 
             />
             <FaqItem 
               question="Posso cancelar o plano PRO a qualquer momento?" 
-              answer="Sim. O plano PRO é uma assinatura mensal sem contrato de fidelidade. Você pode cancelar a qualquer momento diretamente no seu perfil dentro do aplicativo." 
+              answer="Sim. O plano PRO é uma assinatura sem contrato de fidelidade. Você pode cancelar a qualquer momento diretamente no seu perfil dentro do aplicativo." 
             />
+          </div>
+        </section>
+
+        {/* CONTATO */}
+        <section id="contato" className="container mx-auto px-6 max-w-4xl mb-32 pt-10">
+          <div className="rounded-3xl border border-zinc-800 bg-zinc-900/40 p-8 md:p-12 text-center relative overflow-hidden">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-1/2 bg-primary/5 blur-[100px] rounded-full pointer-events-none"></div>
+            
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-zinc-800/50 border border-zinc-700/50 text-white">
+              <MessageSquareText className="h-8 w-8 text-primary" />
+            </div>
+            
+            <h2 className="text-3xl font-bold mb-4 text-white">Ficou com alguma dúvida?</h2>
+            <p className="text-zinc-400 text-lg max-w-2xl mx-auto mb-8">
+              Tem sugestões de novas funcionalidades, encontrou algum problema ou precisa de ajuda com a sua conta? Nossa equipe está pronta para te atender.
+            </p>
+            
+            <a href={`mailto:${CONTATO_EMAIL}`}>
+              <Button size="lg" className="h-14 rounded-full px-8 text-base font-bold bg-white text-black hover:bg-zinc-200 transition-all shadow-lg hover:scale-105 inline-flex items-center gap-2">
+                <Mail className="h-5 w-5" />
+                Falar com o Suporte
+              </Button>
+            </a>
+            
+            <p className="mt-6 text-sm text-zinc-500 font-mono">
+              Ou envie um e-mail direto para: nexusappbrasil@gmail.com <span className="text-zinc-300">{CONTATO_EMAIL}</span>
+            </p>
           </div>
         </section>
 
@@ -245,11 +274,11 @@ const LandingPage = () => {
                 <p className="text-zinc-500 max-w-xs">A plataforma definitiva para transformar sua rotina em resultados reais através da gamificação.</p>
               </div>
               <div>
-                <h4 className="font-bold text-white mb-4">Produto</h4>
+                <h4 className="font-bold text-white mb-4">Navegação</h4>
                 <ul className="space-y-2 text-zinc-500">
-                  <li><a href="#" className="hover:text-primary transition-colors">Recursos</a></li>
-                  <li><a href="#planos" className="hover:text-primary transition-colors">Preços</a></li>
-                  <li><a href="#" className="hover:text-primary transition-colors">Changelog</a></li>
+                  <li><button onClick={() => scrollToSection('recursos')} className="hover:text-primary transition-colors">Recursos</button></li>
+                  <li><button onClick={() => scrollToSection('planos')} className="hover:text-primary transition-colors">Preços</button></li>
+                  <li><button onClick={() => scrollToSection('contato')} className="hover:text-primary transition-colors">Contato</button></li>
                 </ul>
               </div>
               <div>
@@ -257,7 +286,6 @@ const LandingPage = () => {
                 <ul className="space-y-2 text-zinc-500">
                   <li><a href="#" className="hover:text-primary transition-colors">Termos de Uso</a></li>
                   <li><a href="#" className="hover:text-primary transition-colors">Privacidade</a></li>
-                  <li><a href="#" className="hover:text-primary transition-colors">Contato</a></li>
                 </ul>
               </div>
             </div>

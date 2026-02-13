@@ -18,7 +18,7 @@
     <meta name="author" content="Nexus Team" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://nexus-principal.vercel.app/" />
+    <meta property="og:url" content="https://nexusbrasil.vercel.app/" />
     <meta property="og:title" content="NEXUS | Domine sua Rotina" />
     <meta property="og:description" content="Domine seus hábitos, controle sua vida. Gamificação e controle financeiro integrados." />
     <meta property="og:image" content="/og-image.png" />
@@ -27,6 +27,16 @@
     <meta name="twitter:title" content="NEXUS" />
     <meta name="twitter:description" content="Domine seus hábitos, controle sua vida." />
     <meta name="twitter:image" content="/og-image.png" />
+
+    <script>
+      const hostname = window.location.hostname;
+      if (hostname.includes("nexusapp") || hostname === "localhost") {
+        const link = document.createElement('link');
+        link.rel = 'manifest';
+        link.href = '/manifest.json';
+        document.head.appendChild(link);
+      }
+    </script>
   </head>
 
   <body>

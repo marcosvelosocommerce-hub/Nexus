@@ -182,23 +182,22 @@ const AuthPage = () => {
         </CardContent>
       </Card>
 
-      {/* Botão Discreto de Retorno ao Website (Aparece apenas no App instalado) */}
-      {isStandalone && (
-        <div className="absolute bottom-8 z-10 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
-          <a 
-            href="https://nexusbrasil.vercel.app" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="group flex items-center gap-2 text-[10px] font-medium tracking-widest uppercase text-zinc-600 hover:text-primary transition-colors"
-          >
-            <span className="h-px w-6 bg-zinc-800 group-hover:bg-primary/50 transition-colors" />
-            Acessar website NEXUS
-            <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-all translate-x-[-4px] group-hover:translate-x-0" />
-          </a>
-        </div>
-      )}
-    </div>
+      {/* CÓDIGO DO CARD TERMINA ACIMA */}
+      
+      {/* Botão Fixo de Retorno ao Website */}
+      <div className="absolute bottom-8 z-10 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
+        <a 
+          href="https://nexusbrasil.vercel.app" 
+          className="group flex items-center gap-2 text-[10px] font-medium tracking-widest uppercase text-zinc-500 hover:text-primary transition-colors"
+        >
+          <span className="h-px w-6 bg-zinc-800 group-hover:bg-primary/50 transition-colors" />
+          Voltar para o site principal
+        </a>
+      </div>
+
+    </div> // Fim da div min-h-screen principal
   );
 };
 
 export default AuthPage;
+

@@ -203,15 +203,15 @@ const LandingPage = () => {
   
                 {/* Preço com ancoragem (Corte) */}
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-medium text-zinc-500 line-through decoration-red-500/50">
-                     R$ 12,99
-                  </span>
                   <span className="text-5xl font-black text-white">
                     R$ 5,99
-                   </span>
+                  </span>
+                  <span className="text-2xl font-medium text-zinc-500 line-through decoration-red-500/50">
+                    R$ 12,99
+                  </span>
                 </div>
                 <span className="text-zinc-400 text-sm mt-1 block">
-                  por mês. Cancele quando quiser.
+                  Por mês. Cancele quando quiser.
                 </span>
               </div>
               <ul className="space-y-4 mb-8 flex-1">

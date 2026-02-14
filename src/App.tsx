@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import CalendarPage from "./pages/CalendarPage";
 import StatsPage from "./pages/StatsPage";
 import Legal from "./pages/Legal";
+import UpdatePassword from "./pages/UpdatePassword"; 
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -80,6 +81,7 @@ const App = () => {
               <Route path="/estatisticas" element={<Navigate to="/stats" replace />} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/perfil" element={<Navigate to="/profile" replace />} />
+              <Route path="/auth/update-password" element={<UpdatePassword />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>

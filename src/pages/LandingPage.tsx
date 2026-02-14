@@ -1,16 +1,20 @@
 import { useState, useEffect } from "react";
 import { Zap, Shield, Trophy, ArrowRight, LayoutDashboard, Check, Target, LineChart, Wallet, ChevronDown, Star, Mail, MessageSquareText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { toast } from "sonner"; // Para os alertas de sucesso/erro
 
 // O link do seu APP!
 const APP_URL = "https://nexusapp-jet.vercel.app";
 
-// O seu e-mail de contato (Altere aqui quando criar o oficial!)
+// O seu e-mail de contato
 const CONTATO_EMAIL = "nexusappbrasil@gmail.com";
 
 const LandingPage = () => {
   const [scrolled, setScrolled] = useState(false);
-  
+
   // --- Estados do Suporte ---
   const [showSupport, setShowSupport] = useState(false);
   const [supportName, setSupportName] = useState("");
@@ -28,6 +32,43 @@ const LandingPage = () => {
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  // --- Função para Enviar o E-mail ---
+  const handleSupportSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSendingSupport(true);
+
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/nexusappbrasil@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          Nome: supportName,
+          Email: supportEmail,
+          Mensagem: supportMessage,
+          _subject: "Novo Contato pela Landing Page - Nexus", // Assunto do email
+          _template: "table"
+        })
+      });
+
+      if (response.ok) {
+        toast.success("Mensagem enviada com sucesso! Responderemos em breve.");
+        setShowSupport(false);
+        setSupportMessage(""); 
+        setSupportName("");
+        setSupportEmail("");
+      } else {
+        toast.error("Erro ao enviar mensagem. Tente novamente mais tarde.");
+      }
+    } catch (error) {
+      toast.error("Erro de conexão. Verifique a sua internet.");
+    } finally {
+      setIsSendingSupport(false);
     }
   };
 
@@ -105,22 +146,16 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* DASHBOARD PREVIEW COM IMAGEM 3D */}
+        {/* DASHBOARD PREVIEW */}
         <section className="container mx-auto px-6 max-w-6xl mb-32 hover:scale-[1.01] transition-transform duration-500">
           <div className="relative rounded-2xl border border-zinc-800 bg-zinc-900/30 p-2 shadow-2xl backdrop-blur-sm overflow-hidden">
-            
-            {/* Efeito de sombreamento para mesclar a imagem com o fundo do site */}
             <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-transparent to-transparent z-10 pointer-events-none"></div>
-            
             <div className="rounded-xl border border-zinc-800 bg-black aspect-video relative overflow-hidden flex items-center justify-center">
-              
-              {/* COLOQUE O NOME EXATO DO FICHEIRO AQUI NO SRC */}
               <img 
                 src="/nexus-mockup.jpg" 
                 alt="Apresentação do ecossistema Nexus" 
                 className="w-full h-full object-cover"
               />
-
             </div>
           </div>
         </section>
@@ -174,7 +209,6 @@ const LandingPage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Plano Free */}
             <div className="rounded-3xl border border-zinc-800 bg-zinc-900/30 p-8 flex flex-col">
               <div className="mb-6">
                 <h3 className="text-2xl font-bold text-white mb-2">Básico</h3>
@@ -197,29 +231,19 @@ const LandingPage = () => {
               </a>
             </div>
 
-            {/* Plano Premium */}
             <div className="relative rounded-3xl border-2 border-primary bg-zinc-900/50 p-8 flex flex-col transform md:-translate-y-4 shadow-[0_0_40px_rgba(34,197,94,0.15)] overflow-hidden">
               <div className="absolute top-0 right-0 bg-primary text-black text-xs font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider">
                 Recomendado
               </div>
               <div className="mb-8">
-                {/* Badge de 20 Dias Grátis */}
                 <div className="inline-flex items-center gap-1.5 bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-full text-xs font-bold mb-3">
                   🎁 20 Primeiros Dias Grátis
                 </div>
-  
-                {/* Preço com ancoragem (Corte) */}
                 <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-black text-white">
-                    R$ 5,99
-                  </span>
-                  <span className="text-2xl font-medium text-zinc-500 line-through decoration-red-500/50">
-                    R$ 12,99
-                  </span>
+                  <span className="text-5xl font-black text-white">R$ 5,99</span>
+                  <span className="text-2xl font-medium text-zinc-500 line-through decoration-red-500/50">R$ 12,99</span>
                 </div>
-                <span className="text-zinc-400 text-sm mt-1 block">
-                  Por mês. Cancele quando quiser.
-                </span>
+                <span className="text-zinc-400 text-sm mt-1 block">Por mês. Cancele quando quiser.</span>
               </div>
               <ul className="space-y-4 mb-8 flex-1">
                 <PricingFeature text="Hábitos ilimitados" highlight />
@@ -324,11 +348,70 @@ const LandingPage = () => {
           </div>
         </footer>
       </main>
+
+      {/* MODAL DE SUPORTE */}
+      <Dialog open={showSupport} onOpenChange={setShowSupport}>
+        <DialogContent className="bg-zinc-950 border-zinc-800 text-white sm:max-w-md rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl flex items-center gap-2 text-primary">
+              <MessageSquareText className="h-5 w-5" />
+              Falar com o Suporte
+            </DialogTitle>
+          </DialogHeader>
+          
+          <form onSubmit={handleSupportSubmit} className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label htmlFor="support-name" className="text-zinc-300">Seu Nome</Label>
+              <Input 
+                id="support-name" 
+                value={supportName} 
+                onChange={(e) => setSupportName(e.target.value)} 
+                required 
+                className="bg-zinc-900 border-zinc-800 text-white focus-visible:ring-primary" 
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="support-email" className="text-zinc-300">Seu E-mail (Para respondermos)</Label>
+              <Input 
+                id="support-email" 
+                type="email" 
+                value={supportEmail} 
+                onChange={(e) => setSupportEmail(e.target.value)} 
+                required 
+                className="bg-zinc-900 border-zinc-800 text-white focus-visible:ring-primary" 
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="support-msg" className="text-zinc-300">Como podemos ajudar?</Label>
+              <textarea 
+                id="support-msg" 
+                value={supportMessage} 
+                onChange={(e) => setSupportMessage(e.target.value)} 
+                required 
+                rows={4}
+                placeholder="Descreva sua dúvida ou sugestão..."
+                className="w-full rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" 
+              />
+            </div>
+
+            <div className="pt-2 flex justify-end gap-2">
+              <Button type="button" variant="ghost" onClick={() => setShowSupport(false)} className="text-zinc-400 hover:text-white hover:bg-zinc-800">
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={isSendingSupport} className="bg-primary hover:bg-primary/90 text-black font-bold">
+                {isSendingSupport ? "Enviando..." : "Enviar Mensagem"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
 
-// Componentes Auxiliares
+// Componentes Auxiliares...
 const FeatureCard = ({ icon, title, description }: { icon: any, title: string, description: string }) => (
   <div className="group rounded-2xl border border-zinc-800 bg-zinc-900/40 p-8 text-left transition-all hover:border-zinc-700 hover:bg-zinc-900/60 hover:translate-y-[-4px]">
     <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-zinc-800/50 border border-zinc-700/50 group-hover:border-primary/50 group-hover:text-primary transition-colors">

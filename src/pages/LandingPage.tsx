@@ -195,16 +195,24 @@ const LandingPage = () => {
               <div className="absolute top-0 right-0 bg-primary text-black text-xs font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider">
                 Recomendado
               </div>
-              <div className="mb-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <h3 className="text-2xl font-bold text-primary">Nexus PRO</h3>
-                  <Star className="h-5 w-5 text-primary fill-primary" />
+              <div className="mb-8">
+                {/* Badge de 20 Dias Grátis */}
+                <div className="inline-flex items-center gap-1.5 bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-full text-xs font-bold mb-3">
+                  🎁 20 Primeiros Dias Grátis
                 </div>
-                <p className="text-zinc-400 text-sm">Para quem leva o sucesso a sério.</p>
-              </div>
-              <div className="mb-6 flex items-baseline gap-2">
-                <span className="text-5xl font-black">R$ 5.99</span>
-                <span className="text-zinc-500 font-medium">/mês</span>
+  
+                {/* Preço com ancoragem (Corte) */}
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl font-medium text-zinc-500 line-through decoration-red-500/50">
+                     R$ 12,99
+                  </span>
+                  <span className="text-5xl font-black text-white">
+                    R$ 5,99
+                   </span>
+                </div>
+                <span className="text-zinc-400 text-sm mt-1 block">
+                  por mês. Cancele quando quiser.
+                </span>
               </div>
               <ul className="space-y-4 mb-8 flex-1">
                 <PricingFeature text="Hábitos ilimitados" highlight />

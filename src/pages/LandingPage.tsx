@@ -10,6 +10,13 @@ const CONTATO_EMAIL = "nexusappbrasil@gmail.com";
 
 const LandingPage = () => {
   const [scrolled, setScrolled] = useState(false);
+  
+  // --- Estados do Suporte ---
+  const [showSupport, setShowSupport] = useState(false);
+  const [supportName, setSupportName] = useState("");
+  const [supportEmail, setSupportEmail] = useState("");
+  const [supportMessage, setSupportMessage] = useState("");
+  const [isSendingSupport, setIsSendingSupport] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -265,12 +272,15 @@ const LandingPage = () => {
               Tem sugestões de novas funcionalidades, encontrou algum problema ou precisa de ajuda com a sua conta? Nossa equipe está pronta para te atender.
             </p>
             
-            <a href={`mailto:${CONTATO_EMAIL}`}>
-              <Button size="lg" className="h-14 rounded-full px-8 text-base font-bold bg-white text-black hover:bg-zinc-200 transition-all shadow-lg hover:scale-105 inline-flex items-center gap-2">
-                <Mail className="h-5 w-5" />
-                Falar com o Suporte
-              </Button>
-            </a>
+            {/* BOTÃO QUE ABRE O MODAL AGORA */}
+            <Button 
+              size="lg" 
+              onClick={() => setShowSupport(true)}
+              className="h-14 rounded-full px-8 text-base font-bold bg-white text-black hover:bg-zinc-200 transition-all shadow-lg hover:scale-105 inline-flex items-center gap-2"
+            >
+              <Mail className="h-5 w-5" />
+              Falar com o Suporte
+            </Button>
             
             <p className="mt-6 text-sm text-zinc-500 font-mono">
               Ou envie um e-mail direto para: <span className="text-zinc-300">{CONTATO_EMAIL}</span>

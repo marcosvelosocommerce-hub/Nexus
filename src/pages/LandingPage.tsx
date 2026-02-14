@@ -203,7 +203,7 @@ const LandingPage = () => {
                 <p className="text-zinc-400 text-sm">Para quem leva o sucesso a sério.</p>
               </div>
               <div className="mb-6 flex items-baseline gap-2">
-                <span className="text-5xl font-black">R$ 19</span>
+                <span className="text-5xl font-black">R$ 5.99</span>
                 <span className="text-zinc-500 font-medium">/mês</span>
               </div>
               <ul className="space-y-4 mb-8 flex-1">
@@ -213,9 +213,11 @@ const LandingPage = () => {
                 <PricingFeature text="Conquistas e emblemas exclusivos" highlight />
                 <PricingFeature text="Suporte prioritário" highlight />
               </ul>
-              <Button className="w-full h-12 rounded-xl bg-primary text-black hover:bg-primary/90 font-bold text-base shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:scale-[1.02] transition-transform">
-                Assinar o PRO
-              </Button>
+              <a href="https://buy.stripe.com/test_00w3cp3s62Fkd6DetbfrW00" target="_blank" rel="noopener noreferrer" className="w-full">
+                <Button className="w-full h-12 rounded-xl bg-primary text-black hover:bg-primary/90 font-bold text-base shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:scale-[1.02] transition-transform">
+                    Assinar PRO
+                </Button>
+              </a>
             </div>
           </div>
         </section>

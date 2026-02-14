@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useIsPremium } from "@/hooks/useProfile";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const Profile = () => {
   const { user, signOut } = useAuth();
@@ -212,12 +213,17 @@ const Profile = () => {
                 </div>
               </div>
               {!isPremium && (
-                <button 
-                  onClick={handleSimulateUpgrade}
-                  className="rounded-xl bg-primary px-4 py-2 text-xs font-bold text-black shadow-lg shadow-primary/20 hover:scale-105 transition-transform"
+                <Button 
+                  className="w-full md:w-auto bg-primary hover:bg-primary/90 text-black font-bold"
+                  onClick={() => {
+                    const userId = user?.id;
+                    const userEmail = user?.email;
+                    const stripeUrl = `https://buy.stripe.com/test_00w3cp3s62Fkd6DetbfrW00?client_reference_id=${userId}&prefilled_email=${encodeURIComponent(userEmail || '')}`;
+                    window.open(stripeUrl, '_blank');
+                  }}
                 >
-                  UPGRADE
-                </button>
+                  Fazer Upgrade
+                </Button>
               )}
             </div>
 

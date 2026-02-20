@@ -103,7 +103,14 @@ const Profile = () => {
       }
 
       const registration = await navigator.serviceWorker.ready;
-      const applicationServerKey = urlB64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY);
+      const rawKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+      if (!rawKey) {
+        toast.error('Erro: Chave de segurança não encontrada.');
+        return;
+      }
+      
+      const cleanKey = rawKey.replace(/^"|"$/g, '').trim(); 
+      const applicationServerKey = urlB64ToUint8Array(cleanKey);
       
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,

@@ -103,15 +103,19 @@ const Profile = () => {
       }
 
       const registration = await navigator.serviceWorker.ready;
-      const rawKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
-      if (!rawKey) {
-        toast.error('Erro: Chave de segurança não encontrada.');
-        return;
+      
+      // --- 1. O CAÇA-FANTASMAS (Remove inscrições antigas/quebradas) ---
+      const existingSubscription = await registration.pushManager.getSubscription();
+      if (existingSubscription) {
+        console.log('Removendo inscrição antiga...');
+        await existingSubscription.unsubscribe();
       }
       
-      const cleanKey = rawKey.replace(/^"|"$/g, '').trim(); 
-      const applicationServerKey = urlB64ToUint8Array(cleanKey);
+      // --- 2. A SUA CHAVE PÚBLICA (Direto no código) ---
+      const myPublicKey = "B0vX9B0gQD0hF5ZpAQAaewkRC_ekyyruRqvHFfZ5mGFWTy1nz1vbgNS3CxQi9g_RCCEsrybYJ79y-D8tqiC0SGw";
+      const applicationServerKey = urlB64ToUint8Array(myPublicKey);
       
+      // --- 3. NOVA INSCRIÇÃO ---
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey,
@@ -120,11 +124,8 @@ const Profile = () => {
       console.log('Inscrição feita:', JSON.stringify(subscription));
       toast.success('Lembretes ativados com sucesso! 🔔');
       
-      // O próximo passo será salvar isso no Supabase!
-
     } catch (error: any) {
       console.error('Erro ao ativar notificações:', error);
-      // Isso vai mostrar o erro REAL na tela para nós!
       toast.error(`Falha: ${error.message || error}`);
     }
   };

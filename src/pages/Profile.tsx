@@ -115,9 +115,10 @@ const Profile = () => {
       
       // O próximo passo será salvar isso no Supabase!
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao ativar notificações:', error);
-      toast.error('Ocorreu um erro ao ativar as notificações.');
+      // Isso vai mostrar o erro REAL na tela para nós!
+      toast.error(`Falha: ${error.message || error}`);
     }
   };
 

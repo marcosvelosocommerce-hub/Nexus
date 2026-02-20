@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { User, CreditCard, LogOut, Trophy, Star, Shield, Zap, Pencil, Check, X, Crown, Trash2 } from "lucide-react";
+import { User, CreditCard, LogOut, Trophy, Star, Shield, Zap, Pencil, Check, X, Crown, Trash2, Bell } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useHabits } from "@/hooks/useHabits";
@@ -10,6 +10,21 @@ import { useNavigate } from "react-router-dom";
 import { useIsPremium } from "@/hooks/useProfile";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+
+function urlB64ToUint8Array(base64String: string) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, '+')
+    .replace(/_/g, '/');
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
 
 const Profile = () => {
   const { user, signOut } = useAuth();
@@ -70,6 +85,39 @@ const Profile = () => {
     } catch (error) {
       console.error(error);
       toast.error("Erro ao excluir dados.");
+    }
+  };
+
+  // --- Lógica de Notificações ---
+  const handleSubscribeToNotifications = async () => {
+    try {
+      if (!('Notification' in window)) {
+        toast.error('Seu navegador não suporta notificações.');
+        return;
+      }
+
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') {
+        toast.error('Você precisa permitir as notificações no seu navegador/celular!');
+        return;
+      }
+
+      const registration = await navigator.serviceWorker.ready;
+      const applicationServerKey = urlB64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY);
+      
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey,
+      });
+
+      console.log('Inscrição feita:', JSON.stringify(subscription));
+      toast.success('Lembretes ativados com sucesso! 🔔');
+      
+      // O próximo passo será salvar isso no Supabase!
+
+    } catch (error) {
+      console.error('Erro ao ativar notificações:', error);
+      toast.error('Ocorreu um erro ao ativar as notificações.');
     }
   };
 
@@ -226,6 +274,22 @@ const Profile = () => {
                 </Button>
               )}
             </div>
+
+            {/* Opção Notificações */}
+            <button 
+              onClick={handleSubscribeToNotifications}
+              className="w-full flex items-center justify-between p-6 transition-colors hover:bg-white/5 text-left group"
+            >
+              <div className="flex items-center gap-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500/10 text-blue-500 group-hover:scale-110 transition-transform">
+                  <Bell className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="font-bold text-white">Ativar Lembretes</p>
+                  <p className="text-xs text-muted-foreground">Receba avisos para não esquecer os hábitos</p>
+                </div>
+              </div>
+            </button>
 
             {/* Opção Sair */}
             <button 

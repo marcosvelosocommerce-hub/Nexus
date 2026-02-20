@@ -111,8 +111,8 @@ const Profile = () => {
         await existingSubscription.unsubscribe();
       }
       
-      // --- 2. A SUA CHAVE PÚBLICA (Direto no código) ---
-      const myPublicKey = "B0vX9B0gQD0hF5ZpAQAaewkRC_ekyyruRqvHFfZ5mGFWTy1nz1vbgNS3CxQi9g_RCCEsrybYJ79y-D8tqiC0SGw";
+      // --- 2. A SUA CHAVE PÚBLICA CORRIGIDA (Zero no lugar da letra O) ---
+      const myPublicKey = "B0q8uHFbRCYqM39jxKELVrthNZXZd45ML3p2vm7y8QHDg1sEqsLuW8quWUVEM3s9C73A7ujmcJeEwW7cdMXLscU";
       const applicationServerKey = urlB64ToUint8Array(myPublicKey);
       
       // --- 3. NOVA INSCRIÇÃO ---
@@ -128,7 +128,7 @@ const Profile = () => {
       console.error('Erro ao ativar notificações:', error);
       toast.error(`Falha: ${error.message || error}`);
     }
-  };
+  }; 
 
   // --- Simulação de Upgrade ---
   const handleSimulateUpgrade = () => {
@@ -177,7 +177,7 @@ const Profile = () => {
             </div>
             
             <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
-                {/* Avatar com Badge Flutuante Restuardo */}
+                {/* Avatar com Badge Flutuante */}
                 <div className="relative">
                     <div className="h-24 w-24 rounded-full bg-gradient-to-tr from-primary to-purple-600 p-[3px]">
                         <div className="h-full w-full rounded-full bg-card p-1">
@@ -186,7 +186,7 @@ const Profile = () => {
                             </div>
                         </div>
                     </div>
-                    {/* Badge de Nível (Mantido) */}
+                    {/* Badge de Nível */}
                     <div className="absolute -bottom-2 -right-2 bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded-lg border-2 border-card shadow-sm">
                         LVL {rpg.level}
                     </div>
@@ -235,8 +235,6 @@ const Profile = () => {
                         <span>Próx. Nível: {rpg.nextLevelXP}</span>
                     </div>
                 </div>
-
-                {/* Badge Grande Lateral removido conforme solicitado */}
             </div>
         </div>
 

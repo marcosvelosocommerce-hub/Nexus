@@ -40,18 +40,24 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 const App = () => {
   const hostname = window.location.hostname;
   
-  // Regra baseada no seu novo link da Vercel
-  const isAppDomain = hostname.includes("nexusapp") || hostname === "localhost";
+  // 1. Identifica se estamos rodando no link direto do App (ou no PC local)
+  const isAppDomain = hostname === "nexusapp-jet.vercel.app" || hostname === "localhost";
+
+  // 2. DETETIVE PWA: Descobre se abriu pelo ícone do aplicativo no celular/PC
+  const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                (window.navigator as any).standalone === true;
 
   // ==========================================
-  // MUNDO 1: O SITE (nexusbrasil.vercel.app)
+  // MUNDO 1: O SITE (Landing Page - nexusbrasil.vercel.app)
   // ==========================================
-  if (!isAppDomain) {
+  // Só mostra a Landing Page se NÃO for o domínio do App E TAMBÉM NÃO for o PWA instalado
+  if (!isAppDomain && !isPWA) {
     return (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/legal" element={<Legal />} />
+          {/* Qualquer outra URL no site joga de volta pra página inicial dele */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
@@ -59,7 +65,7 @@ const App = () => {
   }
 
   // ==========================================
-  // MUNDO 2: O APP (nexusapp-jet.vercel.app)
+  // MUNDO 2: O APP (nexusapp-jet.vercel.app OU PWA Instalado no celular)
   // ==========================================
   return (
     <QueryClientProvider client={queryClient}>

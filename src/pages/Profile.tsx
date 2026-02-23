@@ -111,9 +111,10 @@ const Profile = () => {
         await existingSubscription.unsubscribe();
       }
       
-      // --- 2. A SUA CHAVE PÚBLICA CORRIGIDA (Zero no lugar da letra O) ---
-      const myPublicKey = "B0q8uHFbRCYqM39jxKELVrthNZXZd45ML3p2vm7y8QHDg1sEqsLuW8quWUVEM3s9C73A7ujmcJeEwW7cdMXLscU";
-      const applicationServerKey = urlB64ToUint8Array(myPublicKey);
+    
+      const applicationServerKey = urlB64ToUint8Array(
+        import.meta.env.VITE_VAPID_PUBLIC_KEY
+      );
       
       // --- 3. NOVA INSCRIÇÃO ---
       const subscription = await registration.pushManager.subscribe({

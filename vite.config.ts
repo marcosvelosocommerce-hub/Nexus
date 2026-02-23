@@ -18,12 +18,16 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     
     VitePWA({
+      // --- MODO MANUAL (NOTIFICAÇÕES) ---
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
+      
+      
       registerType: "autoUpdate",
-      // --- ISSO AQUI: ---
       devOptions: {
-        enabled: true // <--- ISSO LIGA O PWA NO LOCALHOST
+        enabled: true 
       },
-      // ---------------------------
       includeAssets: ["favicon.ico", "pwa-192x192.png", "pwa-512x512.png"],
       manifest: {
         name: 'Nexus App',
@@ -53,9 +57,9 @@ export default defineConfig(({ mode }) => ({
           }
         ]
       },
-      workbox: {
+      // --- IMPORTANTE: Mudamos de 'workbox' para 'injectManifest' ---
+      injectManifest: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
-        navigateFallbackDenylist: [/^\/~oauth/], 
       },
     }),
   ].filter(Boolean),

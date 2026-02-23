@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -38,26 +39,33 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 const App = () => {
-  const hostname = window.location.hostname;
-  
-  // 1. Identifica se estamos rodando no link direto do App (ou no PC local)
-  const isAppDomain = hostname === "nexusapp-jet.vercel.app" || hostname === "localhost";
+  // --- A MÁGICA: O CADEADO DOS MUNDOS ---
+  // Lemos a URL e o Modo de Tela apenas UMA VEZ na hora em que a aplicação inicia.
+  const [isAppMode] = useState(() => {
+    const hostname = window.location.hostname;
+    const isAppDomain = hostname.includes("nexusapp") || hostname === "localhost";
+    
+    // Detetive PWA Turbinado (apanha todos os formatos possíveis de PWA em Android/iOS)
+    const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                  window.matchMedia('(display-mode: fullscreen)').matches ||
+                  window.matchMedia('(display-mode: minimal-ui)').matches ||
+                  (window.navigator as any).standalone === true;
 
-  // 2. DETETIVE PWA: Descobre se abriu pelo ícone do aplicativo no celular/PC
-  const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
-                (window.navigator as any).standalone === true;
+    // Se o Manifest abriu na rota /auth, ou o utilizador tentou ir direto para /dashboard, é o App com certeza.
+    const isAppRoute = window.location.pathname !== "/" && window.location.pathname !== "/legal";
+
+    return isAppDomain || isPWA || isAppRoute;
+  });
 
   // ==========================================
-  // MUNDO 1: O SITE (Landing Page - nexusbrasil.vercel.app)
+  // MUNDO 1: O SITE (Landing Page)
   // ==========================================
-  // Só mostra a Landing Page se NÃO for o domínio do App E TAMBÉM NÃO for o PWA instalado
-  if (!isAppDomain && !isPWA) {
+  if (!isAppMode) {
     return (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/legal" element={<Legal />} />
-          {/* Qualquer outra URL no site joga de volta pra página inicial dele */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
@@ -65,7 +73,7 @@ const App = () => {
   }
 
   // ==========================================
-  // MUNDO 2: O APP (nexusapp-jet.vercel.app OU PWA Instalado no celular)
+  // MUNDO 2: O APP (PWA Instalado ou Domínio Direto)
   // ==========================================
   return (
     <QueryClientProvider client={queryClient}>
@@ -74,6 +82,8 @@ const App = () => {
         <BrowserRouter>
           <AuthProvider>
             <Routes>
+              {/* No Modo App, a raiz (/) exibe o AuthPage. Se já houver conta logada, 
+                  o próprio ficheiro AuthPage encarrega-se de mandar o utilizador para o /dashboard */}
               <Route path="/" element={<AuthPage />} />
               <Route path="/auth" element={<Navigate to="/" replace />} />
               <Route path="/dashboard" element={<ProtectedRoute><Index /></ProtectedRoute>} />

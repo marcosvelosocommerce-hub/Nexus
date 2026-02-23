@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { toast } from "sonner"; // Para os alertas de sucesso/erro
+import { toast } from "sonner"; 
 
 // O link do seu APP!
 const APP_URL = "https://nexusapp-jet.vercel.app";
@@ -22,16 +22,69 @@ const LandingPage = () => {
   const [supportMessage, setSupportMessage] = useState("");
   const [isSendingSupport, setIsSendingSupport] = useState(false);
 
+  // --- Estados do PWA (Instalação) ---
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isInstalled, setIsInstalled] = useState(false);
+
   useEffect(() => {
+    // 1. Scroll do Navbar
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    // 2. Verifica se a pessoa já está usando no modo App instalado
+    if (window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone) {
+      setIsInstalled(true);
+    }
+
+    // 3. Intercepta o convite de instalação do Chrome/Android
+    const handleBeforeInstall = (e: any) => {
+      e.preventDefault(); 
+      setDeferredPrompt(e);
+      setIsInstalled(false);
+    };
+
+    // 4. Escuta quando o usuário terminar de instalar o app
+    const handleAppInstalled = () => {
+      setIsInstalled(true);
+      setDeferredPrompt(null);
+      toast.success("Nexus instalado com sucesso! 🎉");
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
   }, []);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  // --- AÇÃO DO BOTÃO PRINCIPAL (Instalar ou Acessar) ---
+  const handleMainAction = async () => {
+    if (isInstalled) {
+      // Se já tá instalado, manda para o domínio do App!
+      window.location.href = APP_URL;
+      return;
+    }
+
+    if (deferredPrompt) {
+      // Mostra a caixinha nativa "Deseja instalar o app?"
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
+    } else {
+      // FALLBACK (Para iPhone ou PC sem suporte): Redireciona pro app na web
+      window.location.href = APP_URL;
     }
   };
 
@@ -51,7 +104,7 @@ const LandingPage = () => {
           Nome: supportName,
           Email: supportEmail,
           Mensagem: supportMessage,
-          _subject: "Novo Contato pela Landing Page - Nexus", // Assunto do email
+          _subject: "Novo Contato pela Landing Page - Nexus", 
           _template: "table"
         })
       });
@@ -102,11 +155,10 @@ const LandingPage = () => {
             <a href={APP_URL} className="text-sm font-medium text-zinc-400 hover:text-white transition-colors hidden sm:block">
               Entrar
             </a>
-            <a href={APP_URL}>
-              <Button className="h-9 rounded-full px-6 font-semibold bg-white text-black hover:bg-zinc-200 shadow-lg hover:scale-105 transition-all">
-                Acessar App
-              </Button>
-            </a>
+            {/* BOTÃO INTELIGENTE NO NAVBAR */}
+            <Button onClick={handleMainAction} className="h-9 rounded-full px-6 font-semibold bg-white text-black hover:bg-zinc-200 shadow-lg hover:scale-105 transition-all">
+              {isInstalled ? "Acessar App" : "Instalar App"}
+            </Button>
           </div>
         </div>
       </nav>
@@ -135,11 +187,11 @@ const LandingPage = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
-            <a href={APP_URL}>
-              <Button size="lg" className="h-14 rounded-full px-8 text-lg font-bold bg-primary text-black hover:bg-primary/90 shadow-[0_0_30px_rgba(34,197,94,0.3)] hover:scale-105 transition-all">
-                Começar Gratuitamente <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </a>
+            {/* BOTÃO INTELIGENTE NA TELA INICIAL */}
+            <Button onClick={handleMainAction} size="lg" className="h-14 rounded-full px-8 text-lg font-bold bg-primary text-black hover:bg-primary/90 shadow-[0_0_30px_rgba(34,197,94,0.3)] hover:scale-105 transition-all">
+              {isInstalled ? "Acessar App" : "Instalar App"} <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            
             <Button size="lg" variant="outline" onClick={() => scrollToSection('recursos')} className="h-14 rounded-full px-8 text-lg font-medium border-zinc-700 bg-zinc-900/50 text-white hover:bg-zinc-800 transition-all">
               Conhecer Recursos
             </Button>
@@ -224,11 +276,10 @@ const LandingPage = () => {
                 <PricingFeature text="Visualização de agenda mensal" />
                 <PricingFeature text="Sistema de níveis e XP" />
               </ul>
-              <a href={APP_URL}>
-                <Button className="w-full h-12 rounded-xl bg-zinc-800 text-white hover:bg-zinc-700 font-bold text-base">
-                  Começar Grátis
-                </Button>
-              </a>
+              {/* BOTÃO INTELIGENTE NO PLANO GRATUITO */}
+              <Button onClick={handleMainAction} className="w-full h-12 rounded-xl bg-zinc-800 text-white hover:bg-zinc-700 font-bold text-base">
+                {isInstalled ? "Acessar App" : "Começar Grátis"}
+              </Button>
             </div>
 
             <div className="relative rounded-3xl border-2 border-primary bg-zinc-900/50 p-8 flex flex-col transform md:-translate-y-4 shadow-[0_0_40px_rgba(34,197,94,0.15)] overflow-hidden">
@@ -296,7 +347,6 @@ const LandingPage = () => {
               Tem sugestões de novas funcionalidades, encontrou algum problema ou precisa de ajuda com a sua conta? Nossa equipe está pronta para te atender.
             </p>
             
-            {/* BOTÃO QUE ABRE O MODAL AGORA */}
             <Button 
               size="lg" 
               onClick={() => setShowSupport(true)}
